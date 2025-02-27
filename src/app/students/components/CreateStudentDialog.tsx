@@ -46,7 +46,9 @@ export function CreateStudentDialog() {
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline">Cadastrar Aluno</Button>
+        <Button variant="outline" className="text-blue-600">
+          Cadastrar Aluno
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

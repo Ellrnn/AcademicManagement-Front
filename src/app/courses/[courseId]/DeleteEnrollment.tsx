@@ -21,6 +21,8 @@ import {
   deleteEnrollment,
   GetCourseStudents,
 } from "@/app/students/services/ApiService";
+import { QueryKey } from "@/app/students/services/query-keys";
+import { useParams } from "next/navigation";
 
 type DeleteEnrolledStudentProps = {
   courseStudent: GetCourseStudents[number];
@@ -36,13 +38,15 @@ function ConfirmationDialog({
   setOpen,
   courseStudent,
 }: ConfirmationDialogProps) {
+  const { courseId } = useParams();
+
   const { mutate } = useMutation({
     mutationFn: () => deleteEnrollment(courseStudent.enrollmentId),
     onSuccess: () => {
       toast.success("Matrícula excluida!");
       setOpen(false);
     },
-    meta: { refetches: [["course-students"]] },
+    meta: { refetches: [QueryKey.COURSE_STUDENTS(`${courseId}`)] },
   });
 
   return (

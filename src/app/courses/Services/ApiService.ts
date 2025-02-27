@@ -36,3 +36,16 @@ export async function getCourseStudents(courseId: string) {
     params: { courseId },
   });
 }
+
+export async function enrollMultipleStudents(
+  courseId: string,
+  studentIds: string[]
+) {
+  const enrollStudentPromiseMap = studentIds.map((studentId) =>
+    academicAPI.post("/enrollments", {
+      studentId,
+      courseIds: [courseId],
+    })
+  );
+  return Promise.allSettled(enrollStudentPromiseMap);
+}

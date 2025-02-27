@@ -4,15 +4,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BookUser } from "lucide-react";
-import {
-  Enrollment,
-  enrollStudentInCourse,
-  Student,
-} from "../services/ApiService";
+import { enrollStudentInCourse, Student } from "../services/ApiService";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKey } from "@/app/students/services/query-keys";
-import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  FormEventHandler,
+  SetStateAction,
+  useMemo,
+  useState,
+} from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +24,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { ErrorResponse } from "@/types/error";
+import { FancyMultiSelect, Option } from "@/components/ui/multi-select";
+import { getCourses } from "@/app/courses/Services/ApiService";
 
 type EnrollStudentActionProps = {
   student: Student;
@@ -35,14 +38,14 @@ type ConfirmationDialogProps = {
 } & EnrollStudentActionProps;
 
 function EditDialog({ student, open, setOpen }: ConfirmationDialogProps) {
-  const [values, setValues] = useState<Enrollment>({
-    coursesId: [],
-    studentId: student.id,
-  });
+  const [coursesList, setCoursesList] = useState<Option[]>([]);
 
   const { mutate } = useMutation({
-    mutationFn: ({ studentId, coursesId }: Enrollment) =>
-      enrollStudentInCourse(studentId, coursesId),
+    mutationFn: () =>
+      enrollStudentInCourse(
+        student.id,
+        coursesList.map((c) => c.value)
+      ),
     onSuccess: () => {
       toast.success("Aluno Matriculado!");
       setOpen(false);
@@ -52,20 +55,27 @@ function EditDialog({ student, open, setOpen }: ConfirmationDialogProps) {
     meta: { refetches: [QueryKey.STUDENTS] },
   });
 
+  const { data } = useQuery({
+    queryKey: QueryKey.COURSES,
+    queryFn: getCourses,
+  });
+
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log(values);
 
-    mutate({
-      studentId: student.id,
-      coursesId: values.coursesId,
-    });
+    mutate();
   };
 
-  const handleCoursesIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const coursesArray = e.target.value.split(",").map((id) => id.trim());
-    setValues({ ...values, coursesId: coursesArray });
-  };
+  const options = useMemo(
+    () =>
+      data?.data.map((course) => {
+        return {
+          value: course.id,
+          label: course.name,
+        };
+      }) || [],
+    [data]
+  );
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -73,19 +83,19 @@ function EditDialog({ student, open, setOpen }: ConfirmationDialogProps) {
         <DialogHeader>
           <DialogTitle>Matricular Aluno</DialogTitle>
           <DialogDescription>
-            Preencha os IDs dos Cursos para Matricular o Aluno.
+            Selecione os Cursos para Matricular o Aluno.
           </DialogDescription>
         </DialogHeader>
         <form className="grid gap-4 py-4" onSubmit={handleFormSubmit}>
           <div className="flex flex-col gap-2 items-start">
             <Label htmlFor="coursesId" className="text-right">
-              IDs dos Cursos
+              Cursos
             </Label>
-            <Input
-              id="coursesId"
-              className="col-span-3"
-              value={values.coursesId.join(", ")}
-              onChange={handleCoursesIdChange}
+            <FancyMultiSelect
+              placeholder="Selecione o(s) Curso(s)"
+              options={options}
+              selected={coursesList}
+              setSelected={setCoursesList}
             />
           </div>
           <DialogFooter>

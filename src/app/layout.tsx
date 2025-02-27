@@ -32,8 +32,6 @@ export default function RootLayout({
         onSuccess: (_data, _variables, _context, mutation) => {
           queryClient.refetchQueries({
             predicate: (query) =>
-              // invalidate all matching tags at once
-              // or nothing if no meta is provided
               mutation.meta?.refetches?.some((queryKey) =>
                 matchQuery({ queryKey }, query)
               ) ?? false,

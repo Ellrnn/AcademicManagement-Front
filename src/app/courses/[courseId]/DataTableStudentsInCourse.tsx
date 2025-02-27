@@ -28,6 +28,7 @@ import { useQuery } from "@tanstack/react-query";
 import { columns } from "./columns";
 import { QueryKey } from "@/app/students/services/query-keys";
 import { getCourseStudents } from "../Services/ApiService";
+import { EnrollStudentsDialog } from "./EnrollStudentsDialog";
 
 export function DataTableStudentsInCourse({ courseId }: { courseId: string }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -75,6 +76,7 @@ export function DataTableStudentsInCourse({ courseId }: { courseId: string }) {
           }
           className="max-w-sm"
         />
+        <EnrollStudentsDialog />
       </div>
       <div className="rounded-md border">
         <Table>

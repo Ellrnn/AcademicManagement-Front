@@ -21,7 +21,12 @@ export default function Course({
 
   return (
     <div className="flex flex-col container mx-10 py-10">
-      <span className="text-lg">Alunos do curso de {currentCourse?.name}</span>
+      <span className="text-lg">
+        Alunos matriculados no curso{" "}
+        <span className="text-blue-600 font-semibold  ">
+          {currentCourse?.name}
+        </span>
+      </span>
       {currentCourse?.description}
       <DataTableStudentsInCourse courseId={courseId} />
     </div>

@@ -57,7 +57,7 @@ export async function enrollStudentInCourse(
 }
 
 export async function getEnrolledStudents() {
-  return academicAPI.get<GetStudents>("/Students");
+  return academicAPI.get<GetCourseStudents>("/enrolledStudents");
 }
 
 export async function deleteEnrollment(enrollmentId: string) {

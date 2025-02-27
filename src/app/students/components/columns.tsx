@@ -6,9 +6,7 @@ import { format } from "date-fns";
 import { EditStudentAction } from "./EditStudentAction";
 import { DeleteStudentAction } from "./DeleteStudentAction";
 import { EnrollStudentCourse } from "./EnrollStudentCourse";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+import { NotEnrolled } from "./EnrolledStudents";
 
 export const columns: ColumnDef<Student>[] = [
   {
@@ -34,19 +32,25 @@ export const columns: ColumnDef<Student>[] = [
     header: "Id",
   },
   {
-    id: "actions1",
+    id: "EditAction",
     cell: ({ row }) => {
       return <EditStudentAction student={row.original} />;
     },
   },
   {
-    id: "actions2",
+    id: "EnrollAction",
     cell: ({ row }) => {
       return <EnrollStudentCourse student={row.original} />;
     },
   },
   {
-    id: "actions3",
+    id: "BagdeAction",
+    cell: ({ row }) => {
+      return <NotEnrolled student={row.original} />;
+    },
+  },
+  {
+    id: "DeleteAction",
     cell: ({ row }) => {
       return <DeleteStudentAction student={row.original} />;
     },

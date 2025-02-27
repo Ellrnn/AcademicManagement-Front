@@ -45,7 +45,9 @@ export function CreateCourseDialog() {
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline">Criar Novo Curso</Button>
+        <Button variant="outline" className="text-blue-600">
+          Criar Novo Curso
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
